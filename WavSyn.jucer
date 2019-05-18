@@ -2,17 +2,24 @@
 
 <JUCERPROJECT name="wavvvvvvtable" companyName="JUCE" version="1.0.0" userNotes="Wavetable synthesiser."
               companyWebsite="http://juce.com" defines="" projectType="guiapp"
-              id="wIVDRJ" jucerVersion="5.4.3">
+              id="wIVDRJ" jucerVersion="5.4.3" cppLanguageStandard="17">
   <MAINGROUP id="O3NJ0h" name="wavvvvvvtable">
     <GROUP id="{31995B3F-6FB8-0C65-1DD6-47FE2B5FD569}" name="Source">
+      <FILE id="wmUU1U" name="Voice.cpp" compile="1" resource="0" file="Source/Voice.cpp"/>
+      <FILE id="nxHRSE" name="Synthesizer.cpp" compile="1" resource="0" file="Source/Synthesizer.cpp"/>
+      <FILE id="ZLjMND" name="OscControls.h" compile="0" resource="0" file="Source/OscControls.h"
+            xcodeResource="0"/>
       <FILE id="ZBYf5x" name="ButtonListener.h" compile="0" resource="0"
-            file="Source/ButtonListener.h"/>
+            file="Source/ButtonListener.h" xcodeResource="0"/>
       <FILE id="kvmyPd" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
-      <FILE id="AdfLPF" name="WaveViz.h" compile="0" resource="0" file="Source/WaveViz.h"/>
-      <FILE id="keFMFd" name="OSC.h" compile="0" resource="0" file="Source/OSC.h"/>
-      <FILE id="cbPoav" name="WaveGen.h" compile="0" resource="0" file="Source/WaveGen.h"/>
+      <FILE id="AdfLPF" name="WaveViz.h" compile="0" resource="0" file="Source/WaveViz.h"
+            xcodeResource="0"/>
+      <FILE id="keFMFd" name="OSC.h" compile="0" resource="0" file="Source/OSC.h"
+            xcodeResource="0"/>
+      <FILE id="cbPoav" name="WaveGen.h" compile="0" resource="0" file="Source/WaveGen.h"
+            xcodeResource="0"/>
       <FILE id="aKLeiD" name="WavetableSynth_01.h" compile="0" resource="0"
-            file="Source/WavetableSynth_01.h"/>
+            file="Source/WavetableSynth_01.h" xcodeResource="0"/>
     </GROUP>
   </MAINGROUP>
   <MODULES>
@@ -89,6 +96,6 @@
   </EXPORTFORMATS>
   <JUCEOPTIONS/>
   <LIVE_SETTINGS>
-    <OSX/>
+    <OSX buildEnabled="1"/>
   </LIVE_SETTINGS>
 </JUCERPROJECT>

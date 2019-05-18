@@ -388,6 +388,12 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\Voice.cpp">
+      <Filter>wavvvvvvtable\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Synthesizer.cpp">
+      <Filter>wavvvvvvtable\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\Main.cpp">
       <Filter>wavvvvvvtable\Source</Filter>
     </ClCompile>
@@ -2226,6 +2232,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\OscControls.h">
+      <Filter>wavvvvvvtable\Source</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\ButtonListener.h">
       <Filter>wavvvvvvtable\Source</Filter>
     </ClInclude>

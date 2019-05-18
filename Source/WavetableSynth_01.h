@@ -46,9 +46,13 @@
 
 #include "OSC.h"
 #include "WaveGen.h"
-#include "WaveViz.h"
 #include "ButtonListener.h"
+#include "OscControls.h"
 #pragma once
+#include "Synthesizer.cpp"
+
+
+
 
 
 class Visualiser: public AudioVisualiserComponent {
@@ -63,64 +67,79 @@ public: Visualiser(): AudioVisualiserComponent(1) {
     }
 };
 
+
+
 //==============================================================================
 class MainContentComponent: public AudioAppComponent,
-public Timer {
-public: MainContentComponent() {
+public Timer
+{
+    
+    AudioDeviceManager deviceManager;           // [1]
+    ComboBox midiInputList;                     // [2]
+    Label midiInputListLabel;
+    int lastInputIndex = 0;                     // [3]
+    bool isAddingFromMidiInput = false;         // [4]
+    MidiKeyboardState keyboardState;            // [5]
+    double startTime;
+    TextEditor midiMessagesBox;
+    
+    
+    int latestNote = 0;
+    
+public: MainContentComponent() :
+    startTime (Time::getMillisecondCounterHiRes() * 0.001),
+    synthAudioSource (keyboardState, oscControls)
+    {
+    
+
+        addAndMakeVisible (midiInputList);
+        midiInputList.setTextWhenNoChoicesAvailable ("No MIDI Inputs Enabled");
+        auto midiInputs = MidiInput::getDevices();
+        midiInputList.addItemList (midiInputs, 1);
+        midiInputList.onChange = [this] { setMidiInput (midiInputList.getSelectedItemIndex()); };
+        // find the first enabled device and use that by default
+        for (auto midiInput : midiInputs)
+        {
+            if (deviceManager.isMidiInputEnabled (midiInput))
+            {
+                setMidiInput (midiInputs.indexOf (midiInput));
+                break;
+            }
+        }
+        // if no enabled devices were found just use the first one in the list
+        if (midiInputList.getSelectedId() == 0)
+            setMidiInput (0);
+        
+//        keyboardState.addListener (this);
+    
+        
+        
+        
+    midiInputList.onChange = [this] { setMidiInput (midiInputList.getSelectedItemIndex()); };
+    
+
+    
     cpuUsageLabel.setText("CPU Usage", dontSendNotification);
     cpuUsageText.setJustificationType(Justification::right);
     addAndMakeVisible(cpuUsageLabel);
     addAndMakeVisible(cpuUsageText);
     
     
-    addAndMakeVisible(waveViz);
+    addAndMakeVisible(oscControls);
     
-    frequencyLabel.setJustificationType(Justification::left);
-    frequencyLabel.setText("Frequency (Hz)", dontSendNotification);
-    addAndMakeVisible(frequencyLabel);
-    addAndMakeVisible(frequencySlider);
-    frequencySlider.setRange(3.0, 5000.0);
-    frequencySlider.setSkewFactorFromMidPoint(500.0); // [4]
-    frequencySlider.onValueChange = [this] {
-        updateFrequency();
-    };
-    
-    balanceLabel.setJustificationType(Justification::left);
-    balanceLabel.setText("WT Pos", dontSendNotification);
-    addAndMakeVisible(balanceLabel);
-    addAndMakeVisible(balanceSlider);
-    balanceSlider.setRange(0.0, 1.0);
-    //        balanceSlider.setSkewFactorFromMidPoint (.05); // [4]
-    balanceSlider.onValueChange = [this] {
-        updateBalance();
-    };
-    
-    detuneLabel.setJustificationType(Justification::left);
-    detuneLabel.setText("Detune (gap between osc in Hz)", dontSendNotification);
-    addAndMakeVisible(detuneLabel);
-    addAndMakeVisible(detuneSlider);
-    detuneSlider.setRange(0.0, 1.0);
-    //        balanceSlider.setSkewFactorFromMidPoint (.05); // [4]
-    detuneSlider.onValueChange = [this] {
-        updateDetune();
-    };
-    
-    oscLabel.setJustificationType(Justification::left);
-    oscLabel.setText("Number of Oscillators", dontSendNotification);
-    addAndMakeVisible(oscLabel);
-    addAndMakeVisible(oscSlider);
-    oscSlider.setRange(1.0, 16.0, 1.0);
-    //        balanceSlider.setSkewFactorFromMidPoint (.05); // [4]
-    oscSlider.onValueChange = [this] {
-        updateOscillators();
-    };
-    
-    addAndMakeVisible(visualiser);
-    
+//    oscControls.onValueChange = [this] {
+//        oscParams params = oscControls.getParameters();
+//
+//        frequency = params.frequency;
+//        balance = params.balance;
+//        detuneGap = params.detuneGap;
+//        numOsc = params.numOsc;
+//    }
+//
     addAndMakeVisible(triggerButton);
     triggerButton.setButtonText("Trigger");
     triggerButton.addMouseListener(&buttonListener, false);
-
+    
     
     buttonListener.onMouseUp = [this](const MouseEvent& e) {
         adsr.noteOff();
@@ -130,22 +149,27 @@ public: MainContentComponent() {
         adsr.noteOn();
     };
     
+    addAndMakeVisible(visualiser);
     
     
-    sineTable = waveGen.createSineWavetable(sineTable, tableSize);
-    sawTable = waveGen.createSawWavetable(sawTable, tableSize);
-    
-    
-    waveViz.setWaveTables(sineTable, sawTable);
+    visualiser.clear();
+
+    AudioSampleBuffer sineTable = waveGen.createSineWavetable(1 << 8);
+    AudioSampleBuffer sawTable = waveGen.createSawWavetable(1 << 8);
+        
+        
+    oscControls.setWaveTables(sineTable, sawTable);
+        
+        
     
     adsr.setParameters({
-        .attack =  1.0f,
+        .attack =  .03f,
         .decay = 0.3f,
         .sustain = 1.0f,
-        .release = 2.0f
+        .release = 0.0f
     });
     
-    setSize(400, 400);
+    setSize(400, 420);
     setAudioChannels(0, 2); // no inputs, two outputs
     startTimer(50);
 }
@@ -165,115 +189,102 @@ public: MainContentComponent() {
 //        return keyState;
 //    }
 //
+    
+//
+    
+//    void handleIncomingMidiMessage (MidiInput* source, const MidiMessage& message) override
+//    {
+//        const ScopedValueSetter<bool> scopedInputFlag (isAddingFromMidiInput, true);
+////        keyboardState.processNextMidiEvent (message);
+//
+////        postMessageToList (message, source->getName());
+//    }
+//
+    void setMidiInput (int index)
+    {
+        auto list = MidiInput::getDevices();
+        deviceManager.removeMidiInputCallback (list[lastInputIndex], synthAudioSource.getMidiCollector());
+        auto newInput = list[index];
+        if (! deviceManager.isMidiInputEnabled (newInput))
+            deviceManager.setMidiInputEnabled (newInput, true);
+        deviceManager.addMidiInputCallback (newInput, synthAudioSource.getMidiCollector());
+        midiInputList.setSelectedId (index + 1, dontSendNotification);
+        lastInputIndex = index;
+    }
+    
+    
+    
+    
+//    void postMessageToList (const MidiMessage& message, const String& source)
+//    {
+////        (new IncomingMessageCallback (this, message, source))->post();
+//
+//        MessageManager* mm = MessageManager::getInstance();
+//
+//        mm.MessageBase->post((this, message, source));
+//
+//    }
+    
+//    void addMessageToList (const MidiMessage& message, const String& source)
+//    {
+//        auto time = message.getTimeStamp() - startTime;
+//        auto hours   = ((int) (time / 3600.0)) % 24;
+//        auto minutes = ((int) (time / 60.0)) % 60;
+//        auto seconds = ((int) time) % 60;
+//        auto millis  = ((int) (time * 1000.0)) % 1000;
+//        auto timecode = String::formatted ("%02d:%02d:%02d.%03d",
+//                                           hours,
+//                                           minutes,
+//                                           seconds,
+//                                           millis);
+//        auto description = getMidiMessageDescription (message);
+//        String midiMessageString (timecode + "  -  " + description + " (" + source + ")"); // [7]
+//        logMessage (midiMessageString);
+//    }
+    
+    //...
+    
+    //...
+    
+    
+    
     void resized() override {
         int const oscWidth = 400;
-        
         
         cpuUsageLabel.setBounds(10, 10, oscWidth - 20, 20);
         cpuUsageText.setBounds(10, 10, oscWidth - 20, 20);
         
-        waveViz.setBounds(10, 40, oscWidth - 20, 80);
-        
-        frequencyLabel.setBounds(10, 30 + 100, oscWidth - 20, 20);
-        frequencySlider.setBounds(10, 50 + 100, oscWidth - 20, 20);
-        
-        balanceLabel.setBounds(10, 70 + 100, oscWidth - 20, 20);
-        balanceSlider.setBounds(10, 90 + 100, oscWidth - 20, 20);
-        
-        detuneLabel.setBounds(10, 110 + 100, oscWidth - 20, 20);
-        detuneSlider.setBounds(10, 130 + 100, oscWidth - 20, 20);
-        
-        oscLabel.setBounds(10, 150 + 100, oscWidth - 20, 20);
-        oscSlider.setBounds(10, 170 + 100, oscWidth - 100, 20);
+        oscControls.setBounds(10, 40, oscWidth, 250);
         
         triggerButton.setBounds(oscWidth - 80, 170 + 100, 70, 20);
         
         visualiser.setBounds(10, 200 + 100, oscWidth - 20, 80);
         
-        
+        midiInputList.setBounds(getWidth() - 50, getHeight()-20, 40, 20);
     }
     
     void timerCallback() override {
         auto cpu = deviceManager.getCpuUsage() * 100;
         cpuUsageText.setText(String(cpu, 6) + " %", dontSendNotification);
-    }
-    
-    void updateFrequency() {
-        frequency = frequencySlider.getValue(); // [3]
-    }
-    
-    void updateBalance() {
-        balance = balanceSlider.getValue(); // [3]
-        
-        int index = (int)round(balance * 1023.0);
-                
-        waveViz.setWTPos(index);
         
     }
     
-    void updateDetune() {
-        detuneGap = detuneSlider.getValue(); // [3]
-    }
     
-    void updateOscillators() {
-        numOsc = (int) round(oscSlider.getValue());
-        level = 0.25f / numOsc;
-    }
-    
-    void prepareToPlay(int, double sampleRate) override {
-        currentSampleRate = sampleRate;
-        auto numberOfOscillators = 16;
-        
-        visualiser.clear();
-        
-        for (auto i = 0; i < numberOfOscillators; ++i) {
-            auto * oscillatorSine = new WavetableOscillator(sineTable);
-            auto * oscillatorSaw = new WavetableOscillator(sawTable);
-            //            auto midiNote = Random::getSystemRandom().nextDouble() * 36.0 + 48.0;
-            
-            sineoscillators.add(oscillatorSine);
-            sawoscillators.add(oscillatorSaw);
-        }
+    void prepareToPlay(int sPB, double sampleRate) override {
         
 //        level = 0.25f / numberOfOscillators;
+        
+        synthAudioSource.prepareToPlay(sPB, sampleRate);
     }
     
     void releaseResources() override {}
+
     
     void getNextAudioBlock(const AudioSourceChannelInfo & bufferToFill) override {
         visualiser.setSPB(bufferToFill.numSamples);
         
-        auto * leftBuffer = bufferToFill.buffer -> getWritePointer(0, bufferToFill.startSample);
-        auto * rightBuffer = bufferToFill.buffer -> getWritePointer(1, bufferToFill.startSample);
         
-        
-        bufferToFill.clearActiveBufferRegion();
-        
-        for (auto oscillatorIndex = 0; oscillatorIndex < numOsc; ++oscillatorIndex) {
-            auto * oscillatorSine = sineoscillators.getUnchecked(oscillatorIndex);
-            auto * oscillatorSaw = sawoscillators.getUnchecked(oscillatorIndex);
-            
-            double gapToUse = detuneGap;
-            
-            if (oscillatorIndex % 2 == 0) gapToUse *= -1;
-            
-            oscillatorSine -> setFrequency((float) frequency + (oscillatorIndex * gapToUse), currentSampleRate);
-            oscillatorSaw -> setFrequency((float) frequency + (oscillatorIndex * gapToUse), currentSampleRate);
-            
-            for (auto sample = 0; sample < bufferToFill.numSamples; ++sample) {
-                auto sineSample = oscillatorSine -> getNextSample();
-                auto sawSample = oscillatorSaw -> getNextSample();
-                
-                auto mix = (sineSample * balance) + (sawSample * (1.0 - balance));
-                
-                float levelSample = mix * level;
-                
-                levelSample *= adsr.getNextSample();
-                
-                leftBuffer[sample] += levelSample;
-                rightBuffer[sample] += levelSample;
-            }
-        }
+        synthAudioSource.getNextAudioBlock (bufferToFill);
         
         
         visualiser.pushBuffer(bufferToFill);
@@ -284,41 +295,30 @@ public: MainContentComponent() {
 private:
     Label cpuUsageLabel;
     Label cpuUsageText;
-    double currentSampleRate = 0.0;
-    double frequency = 440.0;
-    double balance = 0.5;
-    double detuneGap = 0.5;
-    double numOsc = 1.0;
-    
+    OscControls oscControls;
     Visualiser visualiser;
-    
-    Label frequencyLabel;
-    Slider frequencySlider;
-    Label balanceLabel;
-    Slider balanceSlider;
-    Label detuneLabel;
-    Slider detuneSlider;
-    Label oscLabel;
-    Slider oscSlider;
-    
     TextButton triggerButton;
+    
+    double currentSampleRate = 0.0;
+    double level = 0.25f;
+    double frequency = 440.0;
     
     ADSR adsr;
     
     WaveGenerator waveGen;
-    WaveViz waveViz;
-    
-    AudioSampleBuffer* waveSpace;
+
     
     ButtonListener buttonListener;
     
     const unsigned int tableSize = 256; // [2]
-    float level = 0.25f;
     
     AudioSampleBuffer sineTable; // [1]
     AudioSampleBuffer sawTable;
-    OwnedArray < WavetableOscillator > sawoscillators;
-    OwnedArray < WavetableOscillator > sineoscillators;
+
+    SynthAudioSource synthAudioSource;
+  
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainContentComponent);
     };
+
+

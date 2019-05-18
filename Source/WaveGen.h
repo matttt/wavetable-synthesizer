@@ -13,13 +13,14 @@
 class WaveGenerator {
 public:
     
-    AudioSampleBuffer createHarmSineWavetable(AudioSampleBuffer table, int tableLength) {
+    AudioSampleBuffer createHarmSineWavetable(int tableLength) {
+        AudioSampleBuffer table;
+        
         int harmonics[8] = { 1, 3, 5, 6, 7, 9, 13, 15 };
         float harmonicWeights[8] = { 0.5f, 0.1f, 0.05f, 0.0125f, 0.09f, 0.05f, 0.002f, 0.001f }; // [1]
         
         jassert (numElementsInArray (harmonics) == numElementsInArray (harmonicWeights));
 
-        
         table.setSize(1, tableLength);
         auto * samples = table.getWritePointer(0); // [3]
         
@@ -40,7 +41,8 @@ public:
         return table;
     }
     
-    AudioSampleBuffer createSineWavetable(AudioSampleBuffer table, int tableLength) {
+    AudioSampleBuffer createSineWavetable(int tableLength) {
+        AudioSampleBuffer table;
         
         table.setSize(1, tableLength);
         auto * samples = table.getWritePointer(0); // [3]
@@ -50,7 +52,7 @@ public:
         
         for (auto i = 0; i < tableLength; ++i)
         {
-            auto sample = std::sin (currentAngle);
+            auto sample = std::sin (currentAngle*2);
             samples[i] += (float) sample;                      // [3]
             currentAngle += angleDelta;
         }
@@ -60,12 +62,14 @@ public:
         return table;
     }
     
-    AudioSampleBuffer createSawWavetable(AudioSampleBuffer table, int tableLength) {
+    AudioSampleBuffer createSawWavetable(int tableLength) {
+        AudioSampleBuffer table;
+        
         table.setSize(1, tableLength);
         auto * samples = table.getWritePointer(0); // [3]
         auto stepSize = 2 / (double)(tableLength - 1); // [4]
         for (auto i = 0; i < tableLength; ++i) {
-            auto sample = (1 - (i * stepSize)); // [5]
+            auto sample = -(i * stepSize) + 1; // [5]
             samples[i] = (float) sample;
         }
         

@@ -53,6 +53,14 @@
 			isa = PBXBuildFile;
 			fileRef = 131825EF4AF95C82CDA34F35;
 		};
+		68081AC83625E792FCD11D9A = {
+			isa = PBXBuildFile;
+			fileRef = 5E9DBF64A4E0E3CF974EBD20;
+		};
+		91E5A2DB8CB0CF86729829A1 = {
+			isa = PBXBuildFile;
+			fileRef = 6502FC08C1F8604E1470F3D0;
+		};
 		370EBD8BC70C6F6361B37E6B = {
 			isa = PBXBuildFile;
 			fileRef = BE381BC6EE7099DF0DF34F46;
@@ -185,11 +193,25 @@
 			path = "../../JuceLibraryCode/include_juce_audio_basics.mm";
 			sourceTree = "SOURCE_ROOT";
 		};
+		5E9DBF64A4E0E3CF974EBD20 = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = Voice.cpp;
+			path = ../../Source/Voice.cpp;
+			sourceTree = "SOURCE_ROOT";
+		};
 		633F9F5F5C1D3033113F178F = {
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.objcpp;
 			name = "include_juce_audio_processors.mm";
 			path = "../../JuceLibraryCode/include_juce_audio_processors.mm";
+			sourceTree = "SOURCE_ROOT";
+		};
+		6502FC08C1F8604E1470F3D0 = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = Synthesizer.cpp;
+			path = ../../Source/Synthesizer.cpp;
 			sourceTree = "SOURCE_ROOT";
 		};
 		6F3E020449B17461C9CE86A4 = {
@@ -219,6 +241,13 @@
 			name = "juce_audio_formats";
 			path = "~/JUCE/modules/juce_audio_formats";
 			sourceTree = "<absolute>";
+		};
+		824D8F18457CC25D59DE0676 = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = OscControls.h;
+			path = ../../Source/OscControls.h;
+			sourceTree = "SOURCE_ROOT";
 		};
 		86E32914BBDA5F29C07B72DA = {
 			isa = PBXFileReference;
@@ -405,6 +434,9 @@
 		7FC1C4287131DC363191D288 = {
 			isa = PBXGroup;
 			children = (
+				5E9DBF64A4E0E3CF974EBD20,
+				6502FC08C1F8604E1470F3D0,
+				824D8F18457CC25D59DE0676,
 				E8EE2D0880B0BEB020B30E62,
 				BE381BC6EE7099DF0DF34F46,
 				10D1C70B7901CE916E716A65,
@@ -511,7 +543,7 @@
 		64BAC46251BDC67FDFF281D5 = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_LINK_OBJC_RUNTIME = NO;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -553,7 +585,7 @@
 		F6CA25F77A6717ABB6D7CEEF = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_LINK_OBJC_RUNTIME = NO;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -718,6 +750,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				68081AC83625E792FCD11D9A,
+				91E5A2DB8CB0CF86729829A1,
 				370EBD8BC70C6F6361B37E6B,
 				DEC9BC73A2595CE487C81B8F,
 				3A15D2BD84A9E46D88BC8593,
