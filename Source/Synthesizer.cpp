@@ -13,28 +13,28 @@
 
 
 
-
 class SynthAudioSource   : public AudioSource
 {
 public:
-    SynthAudioSource (MidiKeyboardState& keyState, OscControls& oc)
-    : keyboardState (keyState), oscControls (oc)
+    SynthAudioSource (MidiKeyboardState& keyState, OscControls& oc, ADSRControls& adsrC)
+    : keyboardState (keyState), oscControls (oc), adsrControls (adsrC)
     {
-        for (auto i = 0; i < 4; ++i){
-            Voice * newVoice = new Voice(oc);// [1]
-        
+        for (auto i = 0; i < 8; ++i){
+            Voice * newVoice = new Voice(oc, adsrC, i);// [1]
             synth.addVoice(newVoice);
         
         }
-//        synth.addSound (new SineWaveSound());       // [2]
+        synth.addSound (new WaveTableSound());
     }
-//    void setUsingSineWaveSound()
-//    {
-//        synth.clearSounds();
-//    }
-    void prepareToPlay (int samplesPerBlockExpected, double sampleRate) override
+    
+    void setUsingSineWaveSound()
     {
-        synth.setCurrentPlaybackSampleRate (sampleRate); // [3]
+        synth.clearSounds();
+    }
+    
+    void prepareToPlay (int /*samplesPerBlockExpected*/, double sampleRate) override
+    {
+        synth.setCurrentPlaybackSampleRate (sampleRate);
         midiCollector.reset (sampleRate); // [10]
     }
     
@@ -42,8 +42,10 @@ public:
     void getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill) override
     {
         bufferToFill.clearActiveBufferRegion();
+        
         MidiBuffer incomingMidi;
         midiCollector.removeNextBlockOfMessages (incomingMidi, bufferToFill.numSamples); // [11]
+        
         keyboardState.processNextMidiBuffer (incomingMidi, bufferToFill.startSample,
                                              bufferToFill.numSamples, true);
         
@@ -58,6 +60,7 @@ public:
 private:
     MidiKeyboardState& keyboardState;
     OscControls& oscControls;
+    ADSRControls& adsrControls;
     Synthesiser synth;
     
     MidiMessageCollector midiCollector;

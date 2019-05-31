@@ -5,6 +5,10 @@
               id="wIVDRJ" jucerVersion="5.4.3" cppLanguageStandard="17">
   <MAINGROUP id="O3NJ0h" name="wavvvvvvtable">
     <GROUP id="{31995B3F-6FB8-0C65-1DD6-47FE2B5FD569}" name="Source">
+      <FILE id="Ml2sCw" name="FilterControls.cpp" compile="1" resource="0"
+            file="Source/FilterControls.cpp"/>
+      <FILE id="L69J70" name="ADSRControls.cpp" compile="1" resource="0"
+            file="Source/ADSRControls.cpp"/>
       <FILE id="wmUU1U" name="Voice.cpp" compile="1" resource="0" file="Source/Voice.cpp"/>
       <FILE id="nxHRSE" name="Synthesizer.cpp" compile="1" resource="0" file="Source/Synthesizer.cpp"/>
       <FILE id="ZLjMND" name="OscControls.h" compile="0" resource="0" file="Source/OscControls.h"
@@ -96,6 +100,6 @@
   </EXPORTFORMATS>
   <JUCEOPTIONS/>
   <LIVE_SETTINGS>
-    <OSX buildEnabled="1"/>
+    <OSX buildEnabled="0"/>
   </LIVE_SETTINGS>
 </JUCERPROJECT>

@@ -15,7 +15,7 @@ using namespace std;
 class WaveViz: public Component {
 public: WaveViz() {
 //    startTimer(50);
-    mixedTable.setSize(1, 256);
+    mixedTable.setSize(1, 512);
 }
     
     void setWaveTables (AudioSampleBuffer tableA_, AudioSampleBuffer tableB_) {

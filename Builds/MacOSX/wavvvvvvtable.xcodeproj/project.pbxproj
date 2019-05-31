@@ -53,6 +53,14 @@
 			isa = PBXBuildFile;
 			fileRef = 131825EF4AF95C82CDA34F35;
 		};
+		30BC1941D134D89876B2230E = {
+			isa = PBXBuildFile;
+			fileRef = FD7C467431BA8EAC633CA89B;
+		};
+		1226E87775726936377D7CF7 = {
+			isa = PBXBuildFile;
+			fileRef = D37EB7BBE8C6C4F064B35D17;
+		};
 		68081AC83625E792FCD11D9A = {
 			isa = PBXBuildFile;
 			fileRef = 5E9DBF64A4E0E3CF974EBD20;
@@ -368,6 +376,13 @@
 			path = System/Library/Frameworks/CoreAudio.framework;
 			sourceTree = SDKROOT;
 		};
+		D37EB7BBE8C6C4F064B35D17 = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = ADSRControls.cpp;
+			path = ../../Source/ADSRControls.cpp;
+			sourceTree = "SOURCE_ROOT";
+		};
 		E8EE2D0880B0BEB020B30E62 = {
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
@@ -424,6 +439,13 @@
 			path = "../../JuceLibraryCode/include_juce_core.mm";
 			sourceTree = "SOURCE_ROOT";
 		};
+		FD7C467431BA8EAC633CA89B = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = FilterControls.cpp;
+			path = ../../Source/FilterControls.cpp;
+			sourceTree = "SOURCE_ROOT";
+		};
 		FEB7D175AEE6555A694219C2 = {
 			isa = PBXFileReference;
 			lastKnownFileType = wrapper.framework;
@@ -434,6 +456,8 @@
 		7FC1C4287131DC363191D288 = {
 			isa = PBXGroup;
 			children = (
+				FD7C467431BA8EAC633CA89B,
+				D37EB7BBE8C6C4F064B35D17,
 				5E9DBF64A4E0E3CF974EBD20,
 				6502FC08C1F8604E1470F3D0,
 				824D8F18457CC25D59DE0676,
@@ -750,6 +774,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				30BC1941D134D89876B2230E,
+				1226E87775726936377D7CF7,
 				68081AC83625E792FCD11D9A,
 				91E5A2DB8CB0CF86729829A1,
 				370EBD8BC70C6F6361B37E6B,

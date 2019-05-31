@@ -138,6 +138,8 @@
     <Lib/>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\FilterControls.cpp"/>
+    <ClCompile Include="..\..\Source\ADSRControls.cpp"/>
     <ClCompile Include="..\..\Source\Voice.cpp"/>
     <ClCompile Include="..\..\Source\Synthesizer.cpp"/>
     <ClCompile Include="..\..\Source\Main.cpp"/>

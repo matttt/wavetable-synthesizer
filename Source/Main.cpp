@@ -15,7 +15,7 @@ public:
     //==============================================================================
     Application() {}
 
-    const String getApplicationName() override       { return "WavetableSynthTutorial"; }
+    const String getApplicationName() override       { return "Mateo's Synth"; }
     const String getApplicationVersion() override    { return "1.0.0"; }
 
     void initialise (const String&) override         { mainWindow.reset (new MainWindow ("wavetable start", new MainContentComponent(), *this)); }

@@ -22,9 +22,8 @@ public: OscControls() {
     frequencyLabel.setText("Frequency (Hz)", dontSendNotification);
     addAndMakeVisible(frequencyLabel);
     addAndMakeVisible(frequencySlider);
-    frequencySlider.setRange(3.0, 5000.0);
-    frequencySlider.setValue(440.0);
-    frequencySlider.setSkewFactorFromMidPoint(500.0); // [4]
+    frequencySlider.setRange(-3.0, 3.0);
+    frequencySlider.setValue(0.0);
     frequencySlider.onValueChange = [this] {
         setParameters();
     };
@@ -53,7 +52,7 @@ public: OscControls() {
     oscLabel.setText("Number of Oscillators", dontSendNotification);
     addAndMakeVisible(oscLabel);
     addAndMakeVisible(oscSlider);
-    oscSlider.setRange(1.0, 16.0, 1.0);
+    oscSlider.setRange(1.0, 8.0, 1.0);
     //        balanceSlider.setSkewFactorFromMidPoint (.05); // [4]
     oscSlider.onValueChange = [this] {
         setParameters();
@@ -113,7 +112,7 @@ public: OscControls() {
         detuneSlider.setBounds(0, 130 + 60, oscWidth - 20, 20);
         
         oscLabel.setBounds(0, 150 + 60, oscWidth - 20, 20);
-        oscSlider.setBounds(0, 170 + 60, oscWidth - 100, 20);
+        oscSlider.setBounds(0, 170 + 60, oscWidth - 20, 20);
     }
     
     void setWaveTables (AudioSampleBuffer tableA, AudioSampleBuffer tableB) {
@@ -135,7 +134,7 @@ private:
     Slider oscSlider;
     
     double frequency = 440.0;
-    double balance = 0.5;
+    double balance = 0.0;
     double detuneGap = 0.5;
     double numOsc = 1.0;
     

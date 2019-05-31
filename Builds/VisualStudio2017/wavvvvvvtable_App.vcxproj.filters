@@ -388,6 +388,12 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\FilterControls.cpp">
+      <Filter>wavvvvvvtable\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ADSRControls.cpp">
+      <Filter>wavvvvvvtable\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\Voice.cpp">
       <Filter>wavvvvvvtable\Source</Filter>
     </ClCompile>

@@ -23,6 +23,10 @@ public:
         tableDelta = frequency * tableSizeOverSampleRate;
     }
     
+    void reset() {
+        currentIndex = 0.0f;
+    }
+    
     forcedinline float getNextSample() noexcept {
         auto tableSize = wavetable.getNumSamples();
         auto index0 = (unsigned int) currentIndex;
@@ -33,7 +37,7 @@ public:
         auto value1 = table[index1];
         auto currentSample = value0 + frac * (value1 - value0); // [9]
         if ((currentIndex += tableDelta) > tableSize) // [10]
-            currentIndex -= tableSize;
+            currentIndex = 0;
         return currentSample;
     }
     
