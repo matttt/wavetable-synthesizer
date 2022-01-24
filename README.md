@@ -1,4 +1,4 @@
-# wavetable-sythesizer
+# wavetable-synthesizer
 a synthesizer in c++ using JUCE
 
 up to 16 osc and a simple filter envelope. 
